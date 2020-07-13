@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/producModel.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutterapp/product.dart';
-import 'package:flutterapp/productCard.dart';
+import 'custom_Route.dart';
+import 'producModel.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        onGenerateRoute: CustomRoute.generateRoute,
         title: 'Coffee Test',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -25,12 +25,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  final String productBrand;
-  final String productName;
-  final String imgPath;
-  final int price;
+  final Content content;
+  final int totalPrice;
 
-  const MyHomePage({Key key, this.productBrand, this.productName, this.imgPath, this.price}) : super(key: key);
+  const MyHomePage({Key key, this.content, this.totalPrice}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -61,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide(color: Colors.blue))),
+                  side: BorderSide(color: Colors.brown))),
           actions: [
             InkWell(
               onTap: () {
@@ -120,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: double.maxFinite,
                       height: 350,
                       child: Image.asset(
-                        widget.imgPath,
+                        widget.content.imgPath,
                         height: 300,
                       ),
                     )
@@ -132,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
                 flex: 0,
                 child: Text(
-                  widget.productName,
+                  widget.content.title,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                 )),
             Padding(
@@ -169,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.black87),
                         children: [
                           TextSpan(
-                              text: widget.price.toString(),
+                              text: widget.content.price.toString(),
                               style: TextStyle(
                                   fontSize: 50, fontWeight: FontWeight.bold))
                         ]),
@@ -220,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
-                color: Colors.blue,
+                color: Colors.brown,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50)),
               ),
@@ -242,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: isSelected ? Colors.blue : Colors.black45),
+                color: isSelected ? Colors.brown : Colors.black45),
           ),
         ),
         new Container(
@@ -250,21 +248,21 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Image.asset(
             coffeeCup,
             width: 50,
-            color: isSelected ? Colors.blue : Colors.black45,
+            color: isSelected ? Colors.brown : Colors.black45,
           ),
           decoration: BoxDecoration(
               border: Border(
                   top: BorderSide(
-                      color: isSelected ? Colors.blue : Colors.black45,
+                      color: isSelected ? Colors.brown : Colors.black45,
                       width: isSelected ? 2 : 1),
                   left: BorderSide(
-                      color: isSelected ? Colors.blue : Colors.black45,
+                      color: isSelected ? Colors.brown : Colors.black45,
                       width: isSelected ? 2 : 1),
                   bottom: BorderSide(
-                      color: isSelected ? Colors.blue : Colors.black45,
+                      color: isSelected ? Colors.brown : Colors.black45,
                       width: isSelected ? 2 : 1),
                   right: BorderSide(
-                      color: isSelected ? Colors.blue : Colors.black45,
+                      color: isSelected ? Colors.brown : Colors.black45,
                       width: isSelected ? 2 : 1)),
               borderRadius: BorderRadius.all(Radius.circular(5))),
         )
@@ -277,7 +275,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (builder) {
           return new Container(
-            height: 150.0,
+            height: 180.0,
             color: Colors.transparent, //could change this to Color(0xFF737373),
             //so you don't have to change MaterialApp canvasColor
             child: new Container(
@@ -299,7 +297,21 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 30,
                       decoration: BoxDecoration(),
                     ),
-                    _getEstimate(totalPrice, numOfCups)
+                    _getEstimate(totalPrice, numOfCups),
+                    FlatButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                                color: Colors.brown,
+                                width: 2,
+                                style: BorderStyle.solid)),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/payment',
+                              arguments: widget.content);
+                        },
+                        child: Text(
+                          'Proceed to payment',
+                        ))
                   ],
                 )),
           );

@@ -1,0 +1,74 @@
+{
+  "categories": [
+    {
+      "name": "Cappuccino",
+      "contents": [
+        {
+          "brandName": "Cappuccino",
+          "title": "Lattesso",
+          "price": 100,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Cappuccino",
+          "title": "Lattesso",
+          "price": 150,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Cappuccino",
+          "title": "Lattes",
+          "price": 250,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Cappuccino",
+          "title": "Coffee 4",
+          "price": 300,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Cappuccino",
+          "title": "Macchiatos",
+          "price": 350,
+          "imgPath": "images/coffee.png"
+        }
+      ]
+    },
+    {
+      "name": "Americano",
+      "contents": [
+        {
+          "brandName": "Americano",
+          "title": "Coffee 6",
+          "price": 400,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Americano",
+          "title": "Dollop",
+          "price": 450,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Americano",
+          "title": "Coffee 8",
+          "price": 500,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Americano",
+          "title": "Coffee 9",
+          "price": 550,
+          "imgPath": "images/coffee.png"
+        },
+        {
+          "brandName": "Americano",
+          "title": "Coffee 10",
+          "price": 600,
+          "imgPath": "images/coffee.png"
+        }
+      ]
+    }
+  ]
+}
