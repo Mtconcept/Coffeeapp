@@ -13,13 +13,14 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage>
     with SingleTickerProviderStateMixin {
-  PageController _pageController = PageController(viewportFraction: 0.9);
+  PageController _pageController = PageController(viewportFraction: 0.7);
 
   ProductModel _products;
   Category categories;
   int currentIndexOfCategories = 0;
   int currentIndex = 0;
   int indexx = 0;
+  var currentPageValue;
   ProductModel coffeeCategory;
   Content _content;
   Category _category;
@@ -36,7 +37,6 @@ class _ProductPageState extends State<ProductPage>
   Future loadData() async {
     String jsonString = await coffeeJSonData();
     final jsonResponse = json.decode(jsonString);
-//    print(jsonResponse);
     coffeeCategory = ProductModel.fromJson(jsonResponse);
     print(coffeeCategory.categories);
     productContent = coffeeCategory.categories[currentIndex].contents;
@@ -94,6 +94,11 @@ class _ProductPageState extends State<ProductPage>
                       height: 450,
                       child: PageView.builder(
                         onPageChanged: (index) {
+                          _pageController.addListener(() {
+                            setState(() {
+                              currentPageValue = _pageController.page;
+                            });
+                          });
                           setState(() {
                             indexx = index;
                           });
@@ -101,8 +106,23 @@ class _ProductPageState extends State<ProductPage>
                         itemCount: productContent.length,
                         controller: _pageController,
                         itemBuilder: (context, index) {
-//                          print(productContent);
-                          return productCard(context, productContent, index);
+                          if (index == currentPageValue) {
+                            return AnimatedPadding(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeOutQuint,
+                              padding: EdgeInsets.all(0),
+                                  child: productCard(
+                                  context, productContent, index),
+                            );
+                          } else {
+                            return AnimatedPadding(
+                                duration: Duration(
+                                  milliseconds:0,
+                                ),
+                                padding: EdgeInsets.all(40),
+                                child: productCard(
+                                    context, productContent, index));
+                          }
                         },
                       ),
                     ),
@@ -216,90 +236,108 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Widget productCard(context, List<Content> contentList, index) {
+    double height = 400;
+    double weight = 280;
     Content content = contentList[index];
     print(_category.name);
     String _currency = "\$";
-    return content != null
-        ? Align(
-            alignment: Alignment.centerLeft,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('/details', arguments: content);
-                  },
-                  child: Container(
-                      clipBehavior: Clip.antiAlias,
-                      width: 280,
-                      height: 400,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(36),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: -32,
-                            right: -55,
-                            child: Image.asset(
-                              content.imgPath,
-                              width: 300,
-                              filterQuality: FilterQuality.high,
-                              colorBlendMode: BlendMode.saturation,
-                            ),
+    if (content != null) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed('/details', arguments: content);
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 2000),
+                curve: Curves.bounceIn,
+                onEnd: () {
+                  setState(() {
+                    if (height == index) {
+                      height = 350;
+                      weight = 200;
+                    } else {
+                      height = height;
+                      weight = weight;
+                    }
+                  });
+                },
+                child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    width: weight,
+                    height: height,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(36),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: -32,
+                          right: -55,
+                          child: Image.asset(
+                            content.imgPath,
+                            width: 300,
+                            filterQuality: FilterQuality.high,
+                            colorBlendMode: BlendMode.saturation,
                           ),
-                          Positioned(
-                              bottom: 80,
-                              left: 16,
-                              child: Text(
-                                _category.name != null
-                                    ? _category.name
-                                    : 'No data',
-                                style: TextStyle(
-                                    color: Colors.orangeAccent, fontSize: 16),
-                              )),
-                          Positioned(
-                            bottom: 30,
+                        ),
+                        Positioned(
+                            bottom: 80,
                             left: 16,
                             child: Text(
-                              content.title != null ? content.title : 'No data',
+                              _category.name != null
+                                  ? _category.name
+                                  : 'No data',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 40,
-                                  fontFamily: 'Gilroy',
-                                  fontWeight: FontWeight.bold),
-                            ),
+                                  color: Colors.orangeAccent, fontSize: 16),
+                            )),
+                        Positioned(
+                          bottom: 30,
+                          left: 16,
+                          child: Text(
+                            content.title != null ? content.title : 'No data',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 40,
+                                fontFamily: 'Gilroy',
+                                fontWeight: FontWeight.bold),
                           ),
-                        ],
-                      )),
-                ),
-                Positioned(
-                  bottom: -8,
-                  right: -5,
-                  child: Container(
-                    clipBehavior: Clip.hardEdge,
-                    height: 36,
-                    width: 70,
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(50)),
-                    child: Center(
-                        child: Text(
-                      'N' + content.price.toString() != null
-                          ? content.price.toString()
-                          : 'No data',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+                        ),
+                      ],
                     )),
-                  ),
-                ),
-              ],
+              ),
             ),
-          )
-        : Container();
+            Positioned(
+              bottom: -8,
+              right: -5,
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                height: 36,
+                width: 70,
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(50)),
+                child: Center(
+                    child: Text(
+                  'N' + content.price.toString() != null
+                      ? content.price.toString()
+                      : 'No data',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                )),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutterapp/button.dart';
 import 'package:flutterapp/product.dart';
 import 'custom_Route.dart';
 import 'producModel.dart';
@@ -26,23 +27,31 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   final Content content;
-  final int totalPrice;
+  final int price;
 
-  const MyHomePage({Key key, this.content, this.totalPrice}) : super(key: key);
+  const MyHomePage({Key key, this.content, this.price}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  MyHomePage lastprice;
   int _selectedPosition = -1;
   String _coffeePrice = "0";
   int _cupsCounter = 0;
   int price = 0;
   String _currency = "₦";
   static const String coffeeCup = "images/coffee_cup_size.png";
+  bool changes = true;
+
   @override
   Widget build(BuildContext context) {
+    MyHomePage(
+      price: price,
+    );
+    var width = double.infinity;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -90,6 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _mainBody() {
+    double btnWidth = 200;
+    String addtext = 'Add to Bag';
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
@@ -196,31 +207,32 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 30),
-              padding: EdgeInsets.all(10),
-              width: double.maxFinite,
-              height: 70,
-              child: FlatButton(
-                onPressed: () {
-                  //TODO: Currently _cupsCounter only show 1 when this button is clicked.
-                  // TODO: Increment the _cupsCounter when 'Add to Bag' button is clicked'
-                  //TODO: Call setState((){}) method to update both price and cups counter when 'Add to Bag' button is clicked
-                  setState(() {
-                    this._cupsCounter++;
-                    this.price += int.parse(_coffeePrice);
-                  });
-                },
-                child: Center(
-                  child: Text(
-                    "Add to Bag",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
+            SizedBox(
+              height: 16,
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  this._cupsCounter++;
+                  this.price += int.parse(_coffeePrice);
+                  changes = !changes;
+                });
+              },
+              child: AnimatedContainer(
+                curve: Curves.elasticOut,
+                duration: Duration(milliseconds: 2000),
+                width: changes ? width : 300,
+                height: 54,
+                decoration: BoxDecoration(
+                  color: changes ? Colors.black : Colors.brown,
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                color: Colors.brown,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
+                child: Center(
+                    child: Text(
+                  changes ? addtext : "Added",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
+                )),
               ),
             )
           ],
@@ -307,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: BorderStyle.solid)),
                         onPressed: () {
                           Navigator.pushNamed(context, '/payment',
-                              arguments: widget.content);
+                              arguments: price);
                         },
                         child: Text(
                           'Proceed to payment',

@@ -5,8 +5,9 @@ import 'producModel.dart';
 
 class Payment extends StatefulWidget {
   final Content content;
+  final int price;
 
-  const Payment({Key key, this.content}) : super(key: key);
+  const Payment({Key key, this.content, this.price}) : super(key: key);
   @override
   _PaymentState createState() => _PaymentState();
 }
@@ -14,6 +15,7 @@ class Payment extends StatefulWidget {
 class _PaymentState extends State<Payment> {
   bool isSelected = false;
   int selected = 1;
+  bool animate = true;
   TextEditingController _cardNumbercontroller;
   TextEditingController _cardHoldercontroller;
   TextEditingController _cvvcontroller;
@@ -22,7 +24,7 @@ class _PaymentState extends State<Payment> {
   @override
   void initState() {
     super.initState();
-    print(widget.content.price);
+    print(widget.price);
     _cardHoldercontroller = TextEditingController();
     _cardNumbercontroller = TextEditingController();
     _cvvcontroller = TextEditingController();
@@ -69,7 +71,7 @@ class _PaymentState extends State<Payment> {
                   style: smallText,
                 ),
                 Text(
-                  widget.content.price.toString(),
+                  widget.price.toString(),
                   style: TextStyle(
                       fontSize: 42,
                       fontWeight: FontWeight.bold,
@@ -98,16 +100,19 @@ class _PaymentState extends State<Payment> {
                               selected = index;
                             });
                           },
-                          child: payType(
-                              index,
-                              index == 0
-                                  ? "Paypal"
-                                  : index == 1 ? "Credit" : "Wallet"),
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 2000),
+                            child: payType(
+                                index,
+                                index == 0
+                                    ? "Paypal"
+                                    : index == 1 ? "Credit" : "Wallet"),
+                          ),
                         );
                       }),
                 ),
                 SizedBox(
-                  height:36,
+                  height: 36,
                 ),
                 Text(
                   'Card number',
@@ -120,7 +125,7 @@ class _PaymentState extends State<Payment> {
                     true,
                     Image.asset(
                       'images/mastercard.png',
-                      width: 30,
+                      width: 10,
                     ),
                     15),
                 SizedBox(
@@ -130,8 +135,8 @@ class _PaymentState extends State<Payment> {
                   'Card holder',
                   style: smallText,
                 ),
-                textFields(_cardHoldercontroller, TextInputType.name,'Full Name', true,
-                    null, null),
+                textFields(_cardHoldercontroller, TextInputType.name,
+                    'Full Name', true, null, null),
                 SizedBox(
                   height: 24,
                 ),
@@ -145,7 +150,8 @@ class _PaymentState extends State<Payment> {
                           'CVV',
                           style: smallText,
                         ),
-                        textFields(_cvvcontroller,TextInputType.number, 'CVV', true, null, 3),
+                        textFields(_cvvcontroller, TextInputType.number, 'CVV',
+                            true, null, 3),
                       ],
                     )),
                     SizedBox(
@@ -159,12 +165,15 @@ class _PaymentState extends State<Payment> {
                           'Date',
                           style: smallText,
                         ),
-                        textFields(_datecontroller,TextInputType.datetime, 'MM/YY', false, null, null),
+                        textFields(_datecontroller, TextInputType.datetime,
+                            'MM/YY', false, null, null),
                       ],
                     ))
                   ],
                 ),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -186,20 +195,32 @@ class _PaymentState extends State<Payment> {
                 SizedBox(
                   height: 20,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Proceed to confirm',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      animate = !animate;
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 24.0),
+                    child: AnimatedContainer(
+                      curve: Curves.elasticOut,
+                      duration: Duration(seconds: 2),
+                      width: animate ? 400 : 300,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        color: animate ? Colors.black : Colors.brown,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Center(
+                        child: Text(
+                          animate ? 'Proceed to confirm' : 'Confirmed',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
                     ),
                   ),
                 )
@@ -275,7 +296,7 @@ class _PaymentState extends State<Payment> {
         }
         return null;
       },
-      keyboardType:keyboard,
+      keyboardType: keyboard,
       maxLength: maxLine,
       obscureText: obscure,
       controller: controller,
@@ -288,8 +309,9 @@ class _PaymentState extends State<Payment> {
           hintText: fieldName,
           hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 8),
-          prefix: prefix),
+          contentPadding: EdgeInsets.only(left: 24),
+          prefixIconConstraints: BoxConstraints(maxWidth: 48, minWidth: 36),
+          prefixIcon: prefix),
     );
   }
 }
